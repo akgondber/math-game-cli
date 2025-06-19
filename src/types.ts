@@ -1,3 +1,10 @@
-type Operation = "multiply" | "divide" | "subtract" | "add";
+type BasicMathOperation = "add" | "subtract" | "multiply" | "divide";
 
-export { Operation };
+type TwoItemsOperation = {
+  first: number;
+  second: number;
+  operation: BasicMathOperation;
+  result: number;
+};
+
+export { BasicMathOperation, TwoItemsOperation };

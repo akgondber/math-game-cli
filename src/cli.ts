@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import terminalSize from "terminal-size";
 import {
   clearTerminal,
@@ -27,7 +29,7 @@ import chalk from "chalk";
 import * as R from "remeda";
 import readline from "readline";
 import { promisify } from "util";
-import type { Operation } from "./types.js";
+import type { BasicMathOperation, TwoItemsOperation } from "./types.js";
 import { suites } from "./index.js";
 import delay from "delay";
 
@@ -35,6 +37,8 @@ readline.emitKeypressEvents(process.stdin);
 
 if (process.stdin.isTTY) process.stdin.setRawMode(true);
 
+const getShuffledSuites = (suites) => R.take(R.shuffle(R.flat(suites)), 15);
+let shuffledSuites: TwoItemsOperation[] = getShuffledSuites(suites);
 let score = 0;
 const leftPadding = 2;
 let userStr = "";
@@ -43,7 +47,7 @@ let lastOccupied;
 const updateScore = (newValue: number) => {
   process.stdout.write(ansiEscapes.cursorSavePosition);
   process.stdout.write(ansiEscapes.cursorTo(0, 0));
-  process.stdout.write(`Score: ${newValue}`);
+  // process.stdout.write(`Score: ${newValue}`);
   process.stdout.write(ansiEscapes.cursorRestorePosition);
 };
 let roundIndex = 0;
@@ -92,8 +96,9 @@ const menuListener = (ch: string, key: any) => {
   if (key && key.name === "y") {
     // handleUserAnswer();
     // roundIndex = 0;
+    shuffledSuites = getShuffledSuites(suites);
     startGame();
-    runRound(...suites[0]);
+    runRound(shuffledSuites[0]);
   } else if (key && key.name === "q") {
     process.stdin.pause();
   } else if (key && key.ctrl && key.name === "c") {
@@ -108,9 +113,7 @@ const userAnswerListener = async (ch: string, key: any) => {
     lastOccupied = occupied;
     process.stdout.write(ansiEscapes.cursorMove(occupied[0] + 2, 0));
   } else if (key && key.name === "return") {
-    // process.stdout.write(ansiEscapes.clearTerminal);
-
-    if (suites[roundIndex][3] === Number(userStr)) {
+    if (shuffledSuites[roundIndex].result === Number(userStr)) {
       score++;
       process.stdout.write(ansiEscapes.cursorMove(2, 0));
       drawSuccess();
@@ -121,10 +124,10 @@ const userAnswerListener = async (ch: string, key: any) => {
     roundIndex++;
 
     await delay(1400);
-    if (roundIndex >= suites.length) {
+    if (roundIndex >= shuffledSuites.length) {
       stopGame();
     } else {
-      runRound(...suites[roundIndex]);
+      runRound(shuffledSuites[roundIndex]);
     }
   } else if (key && key.name === "backspace") {
     // process.stdout.write(key.name);
@@ -160,20 +163,18 @@ const userAnswerListener = async (ch: string, key: any) => {
     if (roundIndex >= suites.length) {
       stopGame();
     } else {
-      runRound(...suites[roundIndex]);
+      runRound(shuffledSuites[roundIndex]);
     }
   } else if (key.name === "n") {
     roundIndex++;
     if (roundIndex >= suites.length) {
       stopGame();
     } else {
-      runRound(...suites[roundIndex]);
+      runRound(shuffledSuites[roundIndex]);
     }
   } else if (key && key.ctrl && key.name == "c") {
     process.stdout.write(ansiEscapes.clearTerminal);
     process.stdin.pause();
-  } else {
-    process.stdout.write(key.name);
   }
 };
 
@@ -194,13 +195,7 @@ const stopGame = () => {
   handleMenu();
 };
 
-const runRound = (
-  first: number,
-  second: number,
-  oper: Operation,
-  value: number,
-  isCorrect: boolean,
-) => {
+const runRound = (expression: TwoItemsOperation) => {
   process.stdout.write(ansiEscapes.clearTerminal);
   let topOffset = 1;
   updateScore(score);
@@ -210,19 +205,19 @@ const runRound = (
   // process.stdout.write(ansiEscapes.cursorSavePosition);
   // let occupied31 = drawThree();
   const occupyingList: number[][] = [];
-  let occupied = drawNumber(first);
+  let occupied = drawNumber(expression.first);
   occupyingList.push(occupied);
   // process.stdout.write(ansiEscapes.cursorRestorePosition);
   process.stdout.write(ansiEscapes.cursorMove(occupied[0] + leftPadding, 0));
   process.stdout.write(ansiEscapes.cursorSavePosition);
-  let operOccupied = drawOper(oper);
+  let operOccupied = drawOper(expression.operation);
   occupyingList.push(operOccupied);
   process.stdout.write(ansiEscapes.cursorRestorePosition);
   process.stdout.write(
     ansiEscapes.cursorMove(operOccupied[0] + leftPadding, 0),
   );
   // process.stdout.write(ansiEscapes.cursorSavePosition);
-  let occupied2 = drawNumber(second);
+  let occupied2 = drawNumber(expression.second);
   occupyingList.push(occupied2);
   // process.stdout.write(ansiEscapes.cursorRestorePosition);
   process.stdout.write(ansiEscapes.cursorMove(occupied2[0] + leftPadding, 0));
@@ -371,7 +366,7 @@ const drawNumber = (value: number): number[] => {
   // return [0, 0];
 };
 
-const drawOper = (oper: Operation): number[] => {
+const drawOper = (oper: BasicMathOperation): number[] => {
   if (oper === "add") {
     return drawPlus();
   } else if (oper === "divide") {
@@ -386,7 +381,7 @@ const drawOper = (oper: Operation): number[] => {
 };
 
 startGame();
-runRound(...suites[0]);
+runRound(shuffledSuites[0]);
 
 // process.stdout.write(ansiEscapes.cursorSavePosition);
 // process.stdout.write('score');
