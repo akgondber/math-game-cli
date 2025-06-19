@@ -1,0 +1,50 @@
+{
+  "name": "math-game-cli",
+  "version": "1.0.1",
+  "description": "Some math questions to solve in the cli",
+  "repository": "https://github.com/akgondber/math-game-cli",
+  "author": "Rushan Alyautdinov <akgondber@gmail.com>",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "unbuild",
+    "dev": "node dist/cli.mjs",
+    "prettify": "prettier . --write"
+  },
+  "keywords": [
+    "math",
+    "mathgame",
+    "cli",
+    "learning",
+    "child",
+    "pupil",
+    "quiz",
+    "questions",
+    "school"
+  ],
+  "license": "MIT",
+  "type": "module",
+  "packageManager": "pnpm@10.11.1",
+  "devDependencies": {
+    "@types/node": "^24.0.3",
+    "prettier": "^3.5.3",
+    "unbuild": "^3.5.0"
+  },
+  "dependencies": {
+    "ansi-colors": "^4.1.3",
+    "ansi-escapes": "^7.0.0",
+    "chalk": "^5.4.1",
+    "delay": "^6.0.0",
+    "figures": "^6.1.0",
+    "math-figures": "^2.2.1",
+    "remeda": "^2.23.0",
+    "terminal-size": "^4.0.0"
+  },
+  "bin": {
+    "math-game": "dist/cli.mjs",
+    "maga": "dist/cli.mjs",
+    "mathg": "dist/cli.mjs"
+  },
+  "files": [
+    "dist"
+  ]
+}
