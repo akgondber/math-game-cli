@@ -1,6 +1,6 @@
 {
   "name": "math-game-cli",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Some math questions to solve in the cli",
   "repository": "https://github.com/akgondber/math-game-cli",
   "author": "Rushan Alyautdinov <akgondber@gmail.com>",

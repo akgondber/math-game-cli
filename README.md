@@ -14,6 +14,10 @@ $ npm i -g math-game-cli
 $ math-game-cli
 ```
 
+## Demo
+
+![demo](media/demo.gif)
+
 ## License
 
 MIT © [Rushan Alyautdinov](https://github.com/akgondber)
